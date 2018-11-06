@@ -16,7 +16,7 @@ WARNING:
 
 # Supported tags and respective `Dockerfile` links
 
--	[`4.1.4-xenial`, `4.1-xenial`, `unstable-xenial` (*4.1/Dockerfile*)](https://github.com/docker-library/mongo/blob/fb4e5958a22f8b5c7a65dba70ad53f6b08aeb8c8/4.1/Dockerfile)
+-	[`4.1.4`, `latest` (*Dockerfile*)](https://github.com/antonchernik/docker-image-mongo/blob/master/Dockerfile)
 
 # What is MongoDB?
 
@@ -68,7 +68,6 @@ services:
 
 ```
 
-[![Try in PWD](https://github.com/play-with-docker/stacks/raw/cff22438cb4195ace27f9b15784bbb497047afa7/assets/images/button.png)](http://play-with-docker.com?stack=https://raw.githubusercontent.com/docker-library/docs/3a01591e2c903a8c3224fced78f3f22b817b6272/mongo/stack.yml)
 
 Run `docker stack deploy -c stack.yml mongo` (or `docker-compose -f stack.yml up`), wait for it to initialize completely, and visit `http://swarm-ip:8081`, `http://localhost:8081`, or `http://host-ip:8081` (as appropriate).
 
