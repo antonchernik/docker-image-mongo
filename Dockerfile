@@ -6,8 +6,10 @@ RUN groupadd -r mongodb && useradd -r -g mongodb mongodb
 RUN apt-get update \
 	&& apt-get install -y --no-install-recommends \
 		ca-certificates \
+		gnupg dirmngr \
 		jq \
 		numactl \
+		procps \
 	&& rm -rf /var/lib/apt/lists/*
 
 # grab gosu for easy step-down from root (https://github.com/tianon/gosu/releases)
@@ -29,7 +31,7 @@ RUN set -ex; \
 	export GNUPGHOME="$(mktemp -d)"; \
 	gpg --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys B42F6819007F00F88E364FD4036A9C25BF357DD4; \
 	gpg --batch --verify /usr/local/bin/gosu.asc /usr/local/bin/gosu; \
-	command -v gpgconf && gpgconf --kill all || :; \
+	gpgconf --kill all; \
 	rm -r "$GNUPGHOME" /usr/local/bin/gosu.asc; \
 	chmod +x /usr/local/bin/gosu; \
 	gosu nobody true; \
@@ -42,10 +44,10 @@ RUN set -ex; \
 RUN mkdir /docker-entrypoint-initdb.d
 
 ENV GPG_KEYS \
-# pub   rsa4096 2018-04-18 [SC] [expires: 2023-04-17]
-#       E162 F504 A20C DF15 827F  718D 4B7C 549A 058F 8B6B
-# uid           [ unknown] MongoDB 4.2 Release Signing Key <packaging@mongodb.com>
-	E162F504A20CDF15827F718D4B7C549A058F8B6B
+# pub   4096R/91FA4AD5 2016-12-14 [expires: 2018-12-14]
+#       Key fingerprint = 2930 ADAE 8CAF 5059 EE73  BB4B 5871 2A22 91FA 4AD5
+# uid                  MongoDB 3.6 Release Signing Key <packaging@mongodb.com>
+	2930ADAE8CAF5059EE73BB4B58712A2291FA4AD5
 # https://docs.mongodb.com/manual/tutorial/verify-mongodb-packages/#download-then-import-the-key-file
 RUN set -ex; \
 	export GNUPGHOME="$(mktemp -d)"; \
@@ -53,7 +55,7 @@ RUN set -ex; \
 		gpg --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys "$key"; \
 	done; \
 	gpg --export $GPG_KEYS > /etc/apt/trusted.gpg.d/mongodb.gpg; \
-	command -v gpgconf && gpgconf --kill all || :; \
+	gpgconf --kill all; \
 	rm -r "$GNUPGHOME"; \
 	apt-key list
 
@@ -61,14 +63,14 @@ RUN set -ex; \
 # Options for MONGO_PACKAGE: mongodb-org OR mongodb-enterprise
 # Options for MONGO_REPO: repo.mongodb.org OR repo.mongodb.com
 # Example: docker build --build-arg MONGO_PACKAGE=mongodb-enterprise --build-arg MONGO_REPO=repo.mongodb.com .
-ARG MONGO_PACKAGE=mongodb-org-unstable
+ARG MONGO_PACKAGE=mongodb-org
 ARG MONGO_REPO=repo.mongodb.org
 ENV MONGO_PACKAGE=${MONGO_PACKAGE} MONGO_REPO=${MONGO_REPO}
 
-ENV MONGO_MAJOR 4.1
-ENV MONGO_VERSION 4.1.4
+ENV MONGO_MAJOR 3.6
+ENV MONGO_VERSION 3.6.8
 
-RUN echo "deb http://$MONGO_REPO/apt/ubuntu xenial/${MONGO_PACKAGE%-unstable}/$MONGO_MAJOR multiverse" | tee "/etc/apt/sources.list.d/${MONGO_PACKAGE%-unstable}.list"
+RUN echo "deb http://$MONGO_REPO/apt/debian stretch/${MONGO_PACKAGE%-unstable}/$MONGO_MAJOR main" | tee "/etc/apt/sources.list.d/${MONGO_PACKAGE%-unstable}.list"
 
 RUN set -x \
 	&& apt-get update \
@@ -89,6 +91,8 @@ VOLUME /data/db /data/configdb
 COPY docker-entrypoint.sh /usr/local/bin/
 RUN chmod +x /usr/local/bin/docker-entrypoint.sh
 ENTRYPOINT ["docker-entrypoint.sh"]
+
+
 
 EXPOSE 27017
 CMD ["mongod"]
