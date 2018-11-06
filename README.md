@@ -1,19 +1,3 @@
-<!--
-
-********************************************************************************
-
-WARNING:
-
-    DO NOT EDIT "mongo/README.md"
-
-    IT IS AUTO-GENERATED
-
-    (from the other files in "mongo/" combined with a set of templates)
-
-********************************************************************************
-
--->
-
 # Supported tags and respective `Dockerfile` links
 
 -	[`4.1.4`, `latest` (*Dockerfile*)](https://github.com/antonchernik/docker-image-mongo/blob/master/Dockerfile)
