@@ -1,6 +1,7 @@
 # Supported tags and respective `Dockerfile` links
 
 -	[`4.1.4`, `latest` (*Dockerfile*)](https://github.com/antonchernik/docker-image-mongo/blob/master/Dockerfile)
+-	[`3.6.8` (*Dockerfile*)](https://github.com/antonchernik/docker-image-mongo/blob/v3.6/Dockerfile)
 
 # What is MongoDB?
 
